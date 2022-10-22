@@ -26,27 +26,6 @@ public class EmployeeRecieverService {
     }
 
 
-//    public void SaveEmployeeIntialiser(Employee employee) {
-//
-//        if (employee.getManager() != null) {
-//            employeeRepository.findByDn(employee.getManager().getDn()).flatMap(
-//                    (manager) -> {
-//                        SaveEmployeeIntialiser(employee.getManager());
-//                        return employeeRepository.findByDn(employee.getManager().getDn());
-//                    }).ifPresent((manager2) -> employee.setManager(manager2));
-//
-//        }
-//        if (!employeeRepository.findByDn(employee.getDn()).isPresent()) {
-//            CreateEmployee(employee);
-//        }
-//
-//    }
-
-//
-//    public void  SaveEmployeeIntialiserOpt ( Employee employee){
-//        Optional<Employee> employee1 = employeeRepository.findByDn( employee.getDn()).f
-//
-//    }
     public void SaveEmployeeIntialiser(Employee employee) {
 
         if (employee.getManager() != null) {
