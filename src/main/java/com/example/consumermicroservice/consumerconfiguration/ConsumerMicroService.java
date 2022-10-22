@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.Message;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.function.Consumer;
 
@@ -30,14 +31,11 @@ public class ConsumerMicroService {
     }
 
 
+
+
     @Bean
-    public Consumer<Message<Collection<Employee>>> consumeEmployees() {
-        log.info("Employees have recieved ");
-        return listMessage -> {
-            listMessage.getPayload().stream()
-                    .forEach(x -> log.info("Emolyee recieved {}", x));
-            employeeRecieverService.EmployeesInitializer(listMessage.getPayload());
-        };
+    public void dataBaseInitialiser ( ) throws IOException, InterruptedException {
+        employeeRecieverService.sendingRequestToProducer();
     }
 
 

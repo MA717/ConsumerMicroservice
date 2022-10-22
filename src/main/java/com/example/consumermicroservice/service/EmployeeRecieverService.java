@@ -5,22 +5,47 @@ import com.example.consumermicroservice.entity.Changes;
 import com.example.consumermicroservice.entity.Employee;
 import com.example.consumermicroservice.entity.Employee_Changes;
 import com.example.consumermicroservice.repository.EmployeeRepository;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
-import java.util.Collection;
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Slf4j
 @AllArgsConstructor
 public class EmployeeRecieverService {
     EmployeeRepository employeeRepository;
+    private static final String POSTS_API_URL = "http://localhost:8082/employees/consumerInitializer";
 
-    public void EmployeesInitializer(Collection<Employee> employees) {
+    public void sendingRequestToProducer() throws IOException, InterruptedException {
+        if (employeeRepository.count() == 0) {
+            HttpClient client = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .GET()
+                    .header("accept", "application/json")
+                    .uri(URI.create(POSTS_API_URL))
+                    .build();
+
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            ObjectMapper mapper = new ObjectMapper();
+            List<Employee> employeeList = mapper.readValue(response.body(), new TypeReference<List<Employee>>() {
+            });
+            EmployeesInitializer(employeeList);
+            log.info(employeeList.toString());
+        }
+
+
+    }
+
+    public void EmployeesInitializer(List<Employee> employees) {
 
         employees.stream().forEach(x -> SaveEmployeeIntialiser(x));
     }

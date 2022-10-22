@@ -23,11 +23,8 @@ spring:
 
         consume-in-0:
           destination: messagequeuehub
-          group: updategroup
+          group: consumer1
 
-        consumeEmployees-in-0:
-          destination: eventinitialiser
-          group: initial
 
 
       eventhubs:
@@ -37,7 +34,7 @@ spring:
               checkpoint:
                 mode: MANUAL
       function:
-        definition: consume;consumeEmployees;
+        definition: consume;
 
 
       poller:
