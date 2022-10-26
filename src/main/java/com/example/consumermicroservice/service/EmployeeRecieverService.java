@@ -87,6 +87,10 @@ public class EmployeeRecieverService {
         if (change.equals(Changes.MANAGER_Change)) {
             employee1.setManager(employeeRepository.findByDn(employee.getManager().getDn()).get());
         }
+        if (change.equals(Changes.USERNAME_Change)) {
+            employee1.setUsername(employee.getUsername());
+        }
+
         if (change.equals(Changes.SURNAME_Change)) {
             employee1.setSurname(employee.getSurname());
         }

@@ -1,7 +1,7 @@
 package com.example.consumermicroservice.consumerconfiguration;
 
+import com.azure.spring.messaging.checkpoint.Checkpointer;
 import com.azure.spring.messaging.eventhubs.support.EventHubsHeaders;
-import com.example.consumermicroservice.entity.Employee;
 import com.example.consumermicroservice.entity.Employee_Changes;
 import com.example.consumermicroservice.service.EmployeeRecieverService;
 import lombok.AllArgsConstructor;
@@ -11,8 +11,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.Message;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.function.Consumer;
+
+import static com.azure.spring.messaging.AzureHeaders.CHECKPOINTER;
 
 @Slf4j
 @Configuration
@@ -40,9 +41,15 @@ public class ConsumerMicroService {
     @Bean
     public Consumer<Message<Employee_Changes>> consume() {
         return message -> {
-            log.info("Employee : {} Changes has recieved ", message.getPayload().getEmployee());
+            Checkpointer checkpointer = (Checkpointer) message.getHeaders().get(CHECKPOINTER);
+
             messageRecieverLogger(message);
             employeeRecieverService.EmployeeHandler(message.getPayload());
+
+            checkpointer.success()
+                    .doOnSuccess(success -> log.info("Employee : {} Changes has recieved", message.getPayload()))
+                    .doOnError(error -> log.error("Exception found", error))
+                    .block();
         };
     }
 

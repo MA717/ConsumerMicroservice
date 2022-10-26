@@ -1,4 +1,4 @@
-use springapp ;
+use springapp;
 
-drop table  employee;
+drop table employee;
 select *from employee;
