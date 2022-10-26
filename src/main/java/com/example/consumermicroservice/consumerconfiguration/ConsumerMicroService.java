@@ -31,8 +31,6 @@ public class ConsumerMicroService {
     }
 
 
-
-
     @Bean
     public void dataBaseInitialiser ( ) throws IOException, InterruptedException {
         employeeRecieverService.sendingRequestToProducer();

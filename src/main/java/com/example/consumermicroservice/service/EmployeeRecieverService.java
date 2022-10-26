@@ -17,12 +17,13 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
 @AllArgsConstructor
 public class EmployeeRecieverService {
-    EmployeeRepository employeeRepository;
+    private final EmployeeRepository employeeRepository;
     private static final String POSTS_API_URL = "http://localhost:8082/employees/consumerInitializer";
 
     public void sendingRequestToProducer() throws IOException, InterruptedException {
@@ -54,14 +55,13 @@ public class EmployeeRecieverService {
     public void SaveEmployeeIntialiser(Employee employee) {
 
         if (employee.getManager() != null) {
-            Employee manager = employeeRepository.findByDn(employee.getManager().getDn());
-            if (manager == null) {
+            if (!employeeRepository
+                    .findByDn(employee.getManager().getDn())
+                    .isPresent()) {
                 SaveEmployeeIntialiser(employee.getManager());
             }
         }
-
         CreateEmployee(employee);
-
     }
 
     public void EmployeeHandler(Employee_Changes employee_changes) {
@@ -83,49 +83,55 @@ public class EmployeeRecieverService {
     }
 
 
+    private void ProceedChange(Changes change, Employee employee, Employee employee1) {
+        if (change.equals(Changes.MANAGER_Change)) {
+            employee1.setManager(employeeRepository.findByDn(employee.getManager().getDn()).get());
+        }
+        if (change.equals(Changes.SURNAME_Change)) {
+            employee1.setSurname(employee.getSurname());
+        }
+        if (change.equals(Changes.TELEPHONENUMBER_Change)) {
+            employee1.setTelephoneNumber(employee.getTelephoneNumber());
+        }
+        if (change.equals(Changes.DEPARTMENT_Change)) {
+            employee1.setDepartment(employee.getDepartment());
+        }
+        if (change.equals(Changes.EMAIL_Change)) {
+            employee1.setEmail(employee.getEmail());
+        }
+        if (change.equals(Changes.MOBILENUMBER_Change)) {
+            employee1.setMobileNumber(employee.getMobileNumber());
+        }
+        if (change.equals(Changes.FIRSTNAME_Change)) {
+            employee1.setGivenName(employee.getGivenName());
+        }
+        if (change.equals(Changes.TITLE_Change)) {
+            employee1.setTitle(employee.getTitle());
+        }
+
+    }
+
     public Employee UpdateEmployee(Employee employee, List<Changes> changesList) {
-        Employee employee1 = employeeRepository.findByDn(employee.getDn());
-        if (employee1 != null) {
-            log.info("Employee is found in the Consumer Sucessfully ");
 
+        Optional<Employee> employee1 = employeeRepository.findByDn(employee.getDn());
+        if (employee1.isPresent()) {
+            log.info("Employee is found in the Consumer Sucessfully", employee1);
+            changesList.stream()
+                    .forEach(x -> ProceedChange(x, employee, employee1.get()));
 
-            for (Changes change : changesList) {
-                if (change.equals(Changes.MANAGER_Change)) {
-                    employee1.setManager(employeeRepository.findByDn(employee.getManager().getDn()));
-                }
-                if (change.equals(Changes.SURNAME_Change)) {
-                    employee1.setSurname(employee.getSurname());
-                }
-                if (change.equals(Changes.TELEPHONENUMBER_Change)) {
-                    employee1.setTelephoneNumber(employee.getTelephoneNumber());
-                }
-                if (change.equals(Changes.DEPARTMENT_Change)) {
-                    employee1.setDepartment(employee.getDepartment());
-                }
-                if (change.equals(Changes.EMAIL_Change)) {
-                    employee1.setEmail(employee.getEmail());
-                }
-                if (change.equals(Changes.MOBILENUMBER_Change)) {
-                    employee1.setMobileNumber(employee.getMobileNumber());
-                }
-                if (change.equals(Changes.FIRSTNAME_Change)) {
-                    employee1.setGivenName(employee.getGivenName());
-                }
-                if (change.equals(Changes.TITLE_Change)) {
-                    employee1.setTitle(employee.getTitle());
-                }
-            }
             log.info("Employee {} is updated Sucessfully ", employee1);
-            return employeeRepository.save(employee1);
+            return employeeRepository.save(employee1.get());
         } else {
             return CreateEmployee(employee);
         }
+
+
     }
 
     public Employee SetEmployee(Employee employee) {
         employee.setId(null);
         if (employee.getManager() != null) {
-            employee.setManager(employeeRepository.findByDn(employee.getManager().getDn()));
+            employee.setManager(employeeRepository.findByDn(employee.getManager().getDn()).get());
         }
         Employee result = employeeRepository.save(employee);
         log.info("New Employee is saved Sucessfully {} ", result);
@@ -134,12 +140,11 @@ public class EmployeeRecieverService {
     }
 
     public Employee CreateEmployee(Employee employee) {
-        if (employeeRepository.findByDn(employee.getDn()) == null) {
+        if (!employeeRepository.findByDn(employee.getDn()).isPresent()) {
             return SetEmployee(employee);
         } else {
             log.info("Employee with DN {} found already", employee.getDn());
             return employee;
         }
     }
-
 }
