@@ -24,7 +24,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class EmployeeRecieverService {
     private final EmployeeRepository employeeRepository;
-    private static final String POSTS_API_URL = "http://localhost:8082/employees/consumerInitializer";
+    private static final String POSTS_API_URL = "http://localhost:8082/control/consumerInitializer";
 
     public void sendingRequestToProducer() throws IOException, InterruptedException {
         if (employeeRepository.count() == 0) {
