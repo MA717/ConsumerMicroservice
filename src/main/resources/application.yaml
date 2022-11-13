@@ -12,27 +12,27 @@ spring:
   cloud:
     azure:
       eventhubs:
-        connection-string: Endpoint=sb://messegequeue-azure.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=tU4Pxy5oVGne1j+XOPdhW/KaedQyKD/1GFu35p3G8hA=
+        connection-string: Endpoint=sb://employees-space.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=EqJako2UkXXio2Hqkxpt5GScKDXgczVoSdWLh9/OsS8=
         processor:
           checkpoint-store:
-            account-name: messagequeuestorage
-            account-key: 4fc9Rsqn2RZUQJuRthYUU99TXkbLTEdAdSJWcmWF+IU6Jzbpkyl5/9GYQwSorXzaYq1k/jZaOPKl+AStrsiDvg==
-            container-name: topic
+            account-name: employeesstorage
+            account-key: BJanT7viZEuFA14zg4FkVVRbNfV6WF8N+S9+HbySxm4gqjEuKMqN7DMhVFq2s2RiNxGZ9GUd6OfU+AStUskCiQ==
+            container-name: changeevents
     stream:
       bindings:
 
         consume-in-0:
-          destination: messagequeuehub
-          group: consumer1
+          destination: employeeshub
+          group: $Default
 
 
 
-      eventhubs:
-        bindings:
-          consume-in-0:
-            consumer:
-              checkpoint:
-                mode: MANUAL
+    eventhubs:
+      bindings:
+        consume-in-0:
+          consumer:
+            checkpoint:
+              mode: MANUAL
       function:
         definition: consume;
 
@@ -40,3 +40,7 @@ spring:
       poller:
         initial-delay: 0
         fixed-delay: 1000
+
+
+server:
+  port: 8082

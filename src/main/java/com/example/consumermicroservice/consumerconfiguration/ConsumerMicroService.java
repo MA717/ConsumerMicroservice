@@ -1,9 +1,8 @@
 package com.example.consumermicroservice.consumerconfiguration;
 
 import com.azure.spring.messaging.eventhubs.support.EventHubsHeaders;
-import com.example.consumermicroservice.entity.Employee_Changes;
+import com.example.consumermicroservice.entity.EmployeeChanges;
 import com.example.consumermicroservice.service.EmployeeRecieverService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DatabindException;
@@ -22,9 +21,9 @@ import java.util.function.Consumer;
 @Configuration
 @AllArgsConstructor
 public class ConsumerMicroService {
-    EmployeeRecieverService employeeRecieverService;
-
-    public void messageRecieverLogger(Message<Employee_Changes> message) {
+    private final EmployeeRecieverService employeeRecieverService;
+    private final ObjectMapper mapper;
+    public void messageRecieverLogger(Message<EmployeeChanges> message) {
         log.info("New message received: '{}', partition key: {}, sequence number: {}, offset: {}, enqueued time: {}",
                 message.getPayload(),
                 message.getHeaders().get(EventHubsHeaders.PARTITION_KEY),
@@ -50,10 +49,9 @@ public class ConsumerMicroService {
             log.info("cloud event type {}",cloudevent.getType());
             log.info("cloud event Content {}",cloudevent.getDataContentType());
 
-            ObjectMapper mapper = new ObjectMapper();
 
             try {
-                Employee_Changes employee_changes = mapper.readValue(cloudevent.getData().toBytes(), new TypeReference<Employee_Changes>() {
+                EmployeeChanges employee_changes = mapper.readValue(cloudevent.getData().toBytes(), new TypeReference<EmployeeChanges>() {
                 });
                 employeeRecieverService.EmployeeHandler(employee_changes);
 

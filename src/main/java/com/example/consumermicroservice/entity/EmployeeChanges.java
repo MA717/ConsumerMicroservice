@@ -11,9 +11,9 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Employee_Changes {
+public class EmployeeChanges {
 
     Employee employee ;
 
-    List<Changes> changesList ;
+    Changes changesList ;
 }

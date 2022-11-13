@@ -13,8 +13,10 @@ public interface EmployeeRepository extends JpaRepository<Employee , Long> {
 
 
 
- Optional<Employee>  findByDn( String dn );
+ Optional<Employee>  findByUsername( String Username );
+
 
     @Transactional
-    void deleteByDn(String dn);
+
+    void deleteByUsername(String username);
 }

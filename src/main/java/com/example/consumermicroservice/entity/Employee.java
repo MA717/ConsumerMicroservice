@@ -26,7 +26,7 @@ public class Employee {
     @Column(name = "first_name")
     private String givenName;
 
-    private String dn;
+   // private String dn;
 
     @Column(name = "last_name")
     @JsonProperty("lastName")
@@ -44,9 +44,10 @@ public class Employee {
     private String title;
     private String department;
 
-    @ManyToOne
-    @JoinColumn(name = "manager_id", referencedColumnName = "id", nullable = true)
-    Employee manager;
+//
+//    @ManyToOne
+//    @JoinColumn(name = "manager_id", referencedColumnName = "id", nullable = true)
+//    Employee manager;
 
 
 
