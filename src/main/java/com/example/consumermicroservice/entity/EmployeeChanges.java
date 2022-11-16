@@ -15,5 +15,5 @@ public class EmployeeChanges {
 
     Employee employee ;
 
-    Changes changesList ;
+    Changes changes ;
 }

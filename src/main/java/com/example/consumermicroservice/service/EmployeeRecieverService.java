@@ -65,9 +65,9 @@ public class EmployeeRecieverService {
 
     public void EmployeeHandler(EmployeeChanges employeeChanges) {
 
-        if (employeeChanges.equals(Changes.EMPLOYEE_CREATED)) {
+        if (employeeChanges.getChanges().equals(Changes.EMPLOYEE_CREATED)) {
             CreateEmployee(employeeChanges.getEmployee());
-        } else if (employeeChanges.equals(Changes.EMPLOYEE_DELETED)) {
+        } else if (employeeChanges.getChanges().equals(Changes.EMPLOYEE_DELETED)) {
             deleteEmployee(employeeChanges.getEmployee());
         } else {
             UpdateEmployee(employeeChanges.getEmployee());

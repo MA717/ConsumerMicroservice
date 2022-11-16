@@ -23,15 +23,7 @@ import java.util.function.Consumer;
 public class ConsumerMicroService {
     private final EmployeeRecieverService employeeRecieverService;
     private final ObjectMapper mapper;
-    public void messageRecieverLogger(Message<EmployeeChanges> message) {
-        log.info("New message received: '{}', partition key: {}, sequence number: {}, offset: {}, enqueued time: {}",
-                message.getPayload(),
-                message.getHeaders().get(EventHubsHeaders.PARTITION_KEY),
-                message.getHeaders().get(EventHubsHeaders.SEQUENCE_NUMBER),
-                message.getHeaders().get(EventHubsHeaders.OFFSET),
-                message.getHeaders().get(EventHubsHeaders.ENQUEUED_TIME)
-        );
-    }
+
 
 
     @Bean
@@ -53,9 +45,10 @@ public class ConsumerMicroService {
             try {
                 EmployeeChanges employee_changes = mapper.readValue(cloudevent.getData().toBytes(), new TypeReference<EmployeeChanges>() {
                 });
+                log.info("For Employee :{} ",employee_changes);
+
                 employeeRecieverService.EmployeeHandler(employee_changes);
 
-                log.info("For Employee :{} ",employee_changes);
 
             } catch (IOException e) {
                 throw new RuntimeException(e);
